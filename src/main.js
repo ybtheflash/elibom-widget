@@ -19,6 +19,8 @@ let visualizerAnimation;
 let notPlayingTimeout = null;
 let widgetConfig = null;
 let musicHidden = false; // tracks whether music player is display:none
+let currentIsAndroid = null;
+let frameTransitioning = false;
 
 // ─── InstantDB ───
 const db = init({ appId: APP_ID });
@@ -90,8 +92,37 @@ function getInitials(name) {
 
 // ─── Apply config from InstantDB ───
 function applyConfig(cfg) {
-  widgetConfig = cfg;
   if (!cfg) return;
+
+  if (frameTransitioning) {
+    widgetConfig = cfg;
+    return;
+  }
+
+  const isAndroid = !!cfg.useAndroidFrame;
+
+  if (currentIsAndroid !== null && currentIsAndroid !== isAndroid) {
+    frameTransitioning = true;
+    const phoneContainer = document.querySelector('.phone-container');
+    if (phoneContainer) {
+      phoneContainer.classList.add('pop-down');
+    }
+    setTimeout(() => {
+      frameTransitioning = false;
+      currentIsAndroid = isAndroid;
+      applyConfig(cfg);
+      if (phoneContainer) {
+        phoneContainer.classList.remove('pop-down');
+      }
+    }, 500);
+    return;
+  }
+
+  if (currentIsAndroid === null) {
+    currentIsAndroid = isAndroid;
+  }
+
+  widgetConfig = cfg;
 
   const upNextCard = document.getElementById('upnext-card');
   if (upNextCard) {
