@@ -319,6 +319,16 @@ function applyConfig(cfg) {
     }
   }
 
+  // Music Player visibility toggle
+  const musicSection = document.getElementById('music-section');
+  if (musicSection) {
+    musicSection.style.display = cfg.showMusicPlayer !== false ? '' : 'none';
+  }
+
+  // Text Backdrop Shadow Intensity
+  const shadowOpacity = cfg.textShadowOpacity !== undefined ? cfg.textShadowOpacity : 1.0;
+  document.documentElement.style.setProperty('--text-shadow-opacity', shadowOpacity);
+
   // Update clock/timer immediately
   updateClockOrTimer();
 }

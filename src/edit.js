@@ -205,6 +205,15 @@ function populateForm(cfg) {
 
   // Status Bar Icons
   document.getElementById('status-icons-enabled').checked = !!cfg.statusIconsEnabled;
+
+  // Music Player visibility
+  document.getElementById('show-music-player').checked = cfg.showMusicPlayer !== false;
+
+  // Text Shadow Opacity
+  const shadowOpacity = cfg.textShadowOpacity !== undefined ? cfg.textShadowOpacity : 1.0;
+  const shadowPercent = Math.round(shadowOpacity * 100);
+  document.getElementById('text-shadow-opacity').value = shadowPercent;
+  document.getElementById('shadow-opacity-val').textContent = `${shadowPercent}%`;
 }
 
 function setLogoPreview(elId, src, rounded) {
@@ -402,6 +411,23 @@ function bindControls() {
   document.getElementById('show-previous-match').addEventListener('change', (e) => {
     updateConfig({ showPreviousMatch: e.target.checked });
   });
+  document.getElementById('show-music-player').addEventListener('change', (e) => {
+    updateConfig({ showMusicPlayer: e.target.checked });
+  });
+
+  // Text Shadow Opacity slider
+  const shadowSlider = document.getElementById('text-shadow-opacity');
+  const shadowVal = document.getElementById('shadow-opacity-val');
+  if (shadowSlider && shadowVal) {
+    shadowSlider.addEventListener('input', (e) => {
+      const val = parseInt(e.target.value) || 0;
+      shadowVal.textContent = `${val}%`;
+    });
+    shadowSlider.addEventListener('change', (e) => {
+      const val = parseInt(e.target.value) || 0;
+      updateConfig({ textShadowOpacity: val / 100 });
+    });
+  }
 
   // Logo uploads
   bindLogoUpload('team-a-logo-input', 'teamALogo', 'team-a-logo-preview', 'team-a-rounded');
