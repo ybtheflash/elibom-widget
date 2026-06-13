@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elibom Widget – Control Panel</title>
+  <link rel="stylesheet" href="src/edit.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Password Gate -->
+  <div id="auth-gate" class="auth-gate">
+    <div class="auth-card">
+      <div class="auth-logo">⚡</div>
+      <h1 class="auth-title">Control Panel</h1>
+      <p class="auth-subtitle">Enter passkey to access widget controls</p>
+      <div class="auth-input-row">
+        <input type="password" id="passkey-input" class="auth-input" placeholder="Passkey" autocomplete="off">
+        <button id="auth-btn" class="auth-btn">Unlock</button>
+      </div>
+      <p id="auth-error" class="auth-error" style="display:none;">Invalid passkey</p>
+    </div>
+  </div>
+
+  <!-- Control Panel (hidden until auth) -->
+  <div id="control-panel" class="control-panel" style="display:none;">
+    <header class="panel-header">
+      <h1>⚡ Elibom Control Panel</h1>
+      <div style="display: flex; gap: 12px; align-items: center;">
+        <button id="sync-btn" class="btn btn-primary btn-sm">Sync Latest</button>
+        <span class="connection-status" id="connection-status">● Connecting...</span>
+      </div>
+    </header>
+
+    <div class="panel-grid">
+
+      <!-- Background Image Section -->
+      <section class="panel-card">
+        <h2 class="card-title">🖼 Background Image</h2>
+        <div class="bg-controls">
+          <div class="bg-preview-row">
+            <div class="bg-thumb-container">
+              <img id="bg-preview" class="bg-preview-img" src="" alt="" style="display:none;">
+              <span id="bg-default-badge" class="bg-badge">Default</span>
+            </div>
+            <div class="bg-info">
+              <span id="bg-status" class="bg-status-text">Using default wallpaper</span>
+              <div class="bg-actions">
+                <label class="upload-btn" for="bg-upload-input" id="bg-load-label">Load BG</label>
+                <input type="file" id="bg-upload-input" accept="image/*" hidden>
+                <button class="btn btn-danger btn-sm" id="bg-unload-btn" style="display:none;">Unload</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Timer Section -->
+      <section class="panel-card">
+        <h2 class="card-title">⏱ Timer / Clock</h2>
+
+        <div class="toggle-row">
+          <span class="toggle-label">Mode</span>
+          <div class="toggle-group">
+            <button class="toggle-btn active" id="mode-countdown" data-mode="countdown">Countdown</button>
+            <button class="toggle-btn" id="mode-clock" data-mode="clock">IST Clock</button>
+          </div>
+        </div>
+
+        <div id="countdown-controls" class="countdown-controls">
+          <div class="timer-input-row">
+            <label class="field-label">Set Timer (MM:SS)</label>
+            <div class="timer-inputs">
+              <input type="number" id="timer-mm" class="timer-input" min="0" max="99" value="00" placeholder="MM">
+              <span class="timer-colon">:</span>
+              <input type="number" id="timer-ss" class="timer-input" min="0" max="59" value="00" placeholder="SS">
+            </div>
+          </div>
+          <div class="timer-actions">
+            <button id="timer-set" class="btn btn-secondary">Set</button>
+            <button id="timer-start" class="btn btn-primary">▶ Start</button>
+            <button id="timer-stop" class="btn btn-danger">⏹ Stop</button>
+          </div>
+          <div class="timer-preview" id="timer-preview">Current: 00:00</div>
+        </div>
+      </section>
+
+      <!-- Up Next Teams Section -->
+      <section class="panel-card">
+        <h2 class="card-title">🏆 Up Next – Teams</h2>
+
+        <div class="toggle-row">
+          <span class="toggle-label">Show on Widget</span>
+          <label class="switch">
+            <input type="checkbox" id="show-upnext-match" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="team-edit-row">
+          <div class="team-edit-col">
+            <label class="field-label">Team A</label>
+            <input type="text" id="team-a-name" class="text-input" placeholder="Team A Name" value="SENTINELS">
+            <div class="upload-row">
+              <label class="upload-btn" for="team-a-logo-input">Upload Logo</label>
+              <input type="file" id="team-a-logo-input" accept="image/*" hidden>
+              <img id="team-a-logo-preview" class="logo-preview" src="" alt="" style="display:none;">
+              <button class="unload-logo-btn" id="team-a-logo-unload" style="display:none;" title="Remove Logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+              </button>
+            </div>
+            <label class="checkbox-row">
+              <input type="checkbox" id="team-a-rounded">
+              <span>Rounded</span>
+            </label>
+          </div>
+
+          <div class="team-edit-col">
+            <label class="field-label">Team B</label>
+            <input type="text" id="team-b-name" class="text-input" placeholder="Team B Name" value="G2">
+            <div class="upload-row">
+              <label class="upload-btn" for="team-b-logo-input">Upload Logo</label>
+              <input type="file" id="team-b-logo-input" accept="image/*" hidden>
+              <img id="team-b-logo-preview" class="logo-preview" src="" alt="" style="display:none;">
+              <button class="unload-logo-btn" id="team-b-logo-unload" style="display:none;" title="Remove Logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+              </button>
+            </div>
+            <label class="checkbox-row">
+              <input type="checkbox" id="team-b-rounded">
+              <span>Rounded</span>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- Previous Match Section -->
+      <section class="panel-card">
+        <h2 class="card-title">📊 Previous Match Scores</h2>
+
+        <div class="toggle-row">
+          <span class="toggle-label">Show on Widget</span>
+          <label class="switch">
+            <input type="checkbox" id="show-previous-match">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="team-edit-row">
+          <div class="team-edit-col">
+            <label class="field-label">Team C</label>
+            <input type="text" id="team-c-name" class="text-input" placeholder="Team C Name">
+            <div class="upload-row">
+              <label class="upload-btn" for="team-c-logo-input">Upload Logo</label>
+              <input type="file" id="team-c-logo-input" accept="image/*" hidden>
+              <img id="team-c-logo-preview" class="logo-preview" src="" alt="" style="display:none;">
+              <button class="unload-logo-btn" id="team-c-logo-unload" style="display:none;" title="Remove Logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+              </button>
+            </div>
+            <label class="checkbox-row">
+              <input type="checkbox" id="team-c-rounded">
+              <span>Rounded</span>
+            </label>
+          </div>
+
+          <div class="team-edit-col">
+            <label class="field-label">Team D</label>
+            <input type="text" id="team-d-name" class="text-input" placeholder="Team D Name">
+            <div class="upload-row">
+              <label class="upload-btn" for="team-d-logo-input">Upload Logo</label>
+              <input type="file" id="team-d-logo-input" accept="image/*" hidden>
+              <img id="team-d-logo-preview" class="logo-preview" src="" alt="" style="display:none;">
+              <button class="unload-logo-btn" id="team-d-logo-unload" style="display:none;" title="Remove Logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+              </button>
+            </div>
+            <label class="checkbox-row">
+              <input type="checkbox" id="team-d-rounded">
+              <span>Rounded</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="score-input-row">
+          <label class="field-label">Score</label>
+          <div class="score-inputs">
+            <input type="text" id="score-a" class="score-input" placeholder="0" value="0">
+            <span class="score-dash">–</span>
+            <input type="text" id="score-b" class="score-input" placeholder="0" value="0">
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <script type="module" src="src/edit.js"></script>
+</body>
+</html>

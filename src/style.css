@@ -1,0 +1,513 @@
+/* Font Definitions */
+@font-face {
+  font-family: 'Horizon';
+  src: url('../assets/fonts/Horizon.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Inria Serif';
+  src: url('../assets/fonts/InriaSerif-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Inria Serif';
+  src: url('../assets/fonts/InriaSerif-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('../assets/fonts/Poppins-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('../assets/fonts/Poppins-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+}
+
+/* Global Reset & Stream Overlay Prep */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: transparent;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  font-family: 'Poppins', sans-serif;
+  color: #ffffff;
+}
+
+/* Main Wrapper for Scaling/Centering */
+.widget-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* Phone Container (Determined by Frame Aspect Ratio) */
+.phone-container {
+  position: relative;
+  width: 420px; /* Adjust width as needed for OBS stream space */
+  max-width: 90vw;
+  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.6));
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Phone Frame Overlay (Always on Top) */
+.phone-frame {
+  width: 100%;
+  height: auto;
+  display: block;
+  position: relative;
+  z-index: 10;
+  pointer-events: none; /* Let clicks pass through if interactive */
+}
+
+/* Screen (Behind the Phone Frame) */
+.phone-screen {
+  position: absolute;
+  /* Shifted inward to prevent wallpaper from overflowing the phone bezel frame */
+  top: 1.5%;
+  bottom: 1.5%;
+  left: 3.8%;
+  right: 3.8%;
+  z-index: 1;
+  border-radius: 42px; /* Fits screen corner curvature */
+  background-size: 100% 100%; /* Stretches background to fill screen completely */
+  background-position: center;
+  background-repeat: no-repeat;
+  overflow: hidden;
+}
+
+/* Wallpaper Dark Overlay for Better Text Contrast */
+.screen-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.25);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Screen Content Layout */
+.screen-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Pushes everything to the top */
+  align-items: center;
+  padding: 70px 20px 20px 20px; /* Reset top padding to 70px to bring timer down slightly */
+  gap: 12px; /* Minimal, uniform gaps between elements */
+}
+
+/* Top Section: "Match starts in" & Clock */
+.header-section {
+  text-align: center;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.match-starts-text {
+  font-family: 'Inria Serif', serif;
+  font-size: 26px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.95);
+  letter-spacing: 0.5px;
+  text-shadow: 0 3px 6px rgba(0, 0, 0, 0.8), 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.clock-text {
+  font-family: 'Inria Serif', serif;
+  font-size: 125px;
+  font-weight: 400;
+  color: #ffffff;
+  line-height: 0.95;
+  margin-top: 2px;
+  letter-spacing: -3px;
+  text-shadow: 0 6px 15px rgba(0, 0, 0, 0.9), 0 2px 5px rgba(0, 0, 0, 0.6);
+}
+
+/* iOS style Notification Card */
+.notification-card {
+  width: 92%;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(8px); /* Reduced blur from 20px for transparency */
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 18px;
+  padding: 6px 12px 6px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+  margin-top: 5px; /* Minimal gap below clock */
+}
+
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 4px;
+  margin-bottom: 2px;
+}
+
+.notif-header-left {
+  display: flex;
+  align-items: center;
+}
+
+.notif-app-name {
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.85);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.notif-bullet {
+  font-size: 8px;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0 5px;
+}
+
+.notif-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.notif-time {
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Middle Section: VS Matchup (Inside Notification Card) */
+.vs-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+}
+
+.team-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 95px;
+}
+
+.team-logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 48px; /* Thinner compact size for notification card */
+  height: 48px;
+}
+
+.team-logo {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4));
+}
+
+.team-initials {
+  font-family: 'Poppins', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.15);
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.team-name {
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: #ffffff;
+  text-transform: uppercase;
+  text-align: center;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.vs-text {
+  font-family: 'Poppins', sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.8);
+  text-transform: lowercase;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+  padding: 0;
+  margin-bottom: 4px; /* Visual balance for alignment */
+}
+
+/* Bottom Section: Music Player Widget */
+.music-section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.music-player {
+  width: 92%;
+  aspect-ratio: 2.15; /* Thinner aspect ratio to consume less vertical space */
+  border-radius: 18px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.music-player.hidden-right {
+  transform: translateX(120%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.music-player.hidden-left {
+  transform: translateX(-120%);
+  opacity: 0;
+  pointer-events: none;
+  transition: none !important;
+}
+
+.music-bg {
+  position: absolute;
+  top: -10px; bottom: -10px; left: -10px; right: -10px;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.5); /* Removed blur entirely, slightly darkened for contrast */
+  z-index: 0;
+  transition: background-image 0.5s ease;
+}
+
+.music-overlay {
+  position: absolute;
+  top: 0; bottom: 0; left: 0; right: 0;
+  background: rgba(40, 10, 10, 0.25); /* Less tint opacity to show sharp art */
+  z-index: 1;
+}
+
+.music-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  padding: 8px 12px; /* Thinner padding */
+}
+
+.music-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.music-xe {
+  font-family: 'Horizon', sans-serif;
+  font-size: 18px; /* Slightly smaller XE logo */
+  color: #fff;
+  letter-spacing: 1px;
+}
+
+.music-device-pill {
+  background: #fce3de;
+  color: #3a1d1d;
+  font-family: 'Poppins', sans-serif;
+  font-size: 9px; /* Slightly smaller text */
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.music-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: auto;
+  margin-bottom: 4px; /* Reduced margin */
+}
+
+.music-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  max-width: 70%;
+}
+
+.music-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 15px; /* Slightly smaller track title */
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.music-artist {
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.85);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.music-play-btn {
+  background: #fce3de;
+  color: #3a1d1d;
+  width: 36px; /* Squeezed height of play button */
+  height: 36px;
+  border-radius: 11px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.music-timeline-container {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.lottie-visualizer {
+  width: 32px;
+  height: 24px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.lottie-visualizer svg {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.music-controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  color: #fff;
+  width: 100%;
+  margin-bottom: 0px;
+}
+
+.control-btn {
+  flex-shrink: 0;
+  opacity: 0.8;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.control-btn:hover {
+  opacity: 1;
+}
+
+.progress-bar-container {
+  flex-grow: 1;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: #fff;
+  border-radius: 2px;
+  transition: width 0.1s linear;
+}
+
+.opacity-70 { opacity: 0.7; }
+.ml-1 { margin-left: 4px; }
+
+/* Rounded logo toggle */
+.team-logo-container.rounded {
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.team-logo-container.rounded .team-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Previous Match Score Text */
+.score-text {
+  font-family: 'Poppins', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+  padding: 0;
+  margin-bottom: 4px;
+  white-space: nowrap;
+}
+
+/* Previous Match Card */
+.previous-match-card {
+  margin-top: 0;
+}

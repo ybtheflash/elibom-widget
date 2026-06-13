@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elibom Live Stream OBS Widget</title>
+  <link rel="stylesheet" href="src/style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+</head>
+<body>
+  <div class="widget-wrapper">
+    <!-- Phone Mockup Container -->
+    <div class="phone-container">
+      <!-- Screen Content (Behind the Frame) -->
+      <div class="phone-screen" style="background-image: url('assets/phone-bg.webp');">
+        <!-- Overlay for darker wallpaper/contrast if needed -->
+        <div class="screen-overlay"></div>
+        
+        <div class="screen-content">
+          <!-- Top Section: Header & Clock -->
+          <div class="header-section">
+            <span class="match-starts-text" id="header-label">Match starts in</span>
+            <div id="clock-display" class="clock-text">00:00</div>
+          </div>
+
+          <!-- Notification Box (Up Next Matchup) -->
+          <div class="notification-card" id="upnext-card">
+            <div class="notification-header">
+              <div class="notif-header-left">
+                <span class="notif-app-name">RISER'S 2.0</span>
+                <span class="notif-bullet">•</span>
+                <span class="notif-title">Up Next</span>
+              </div>
+              <span class="notif-time">now</span>
+            </div>
+
+            <div class="vs-section">
+              <div class="team-container team-a">
+                <div class="team-logo-container" id="team-a-logo-container">
+                  <div class="team-initials" id="team-a-initials">SE</div>
+                  <img src="" alt="SENTINELS" class="team-logo" id="team-a-logo" style="display:none;">
+                </div>
+                <span class="team-name" id="team-a-name">SENTINELS</span>
+              </div>
+
+              <span class="vs-text">v/s</span>
+
+              <div class="team-container team-b">
+                <div class="team-logo-container" id="team-b-logo-container">
+                  <div class="team-initials" id="team-b-initials">G2</div>
+                  <img src="" alt="G2" class="team-logo" id="team-b-logo" style="display:none;">
+                </div>
+                <span class="team-name" id="team-b-name">G2</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Section: Music Player Widget -->
+          <div class="music-section" id="music-section">
+            <div class="music-player" id="music-player">
+              <div class="music-bg" id="music-bg" style="background-image: url('assets/empty-player.webp');"></div>
+              <div class="music-overlay" id="music-overlay"></div>
+              
+              <div class="music-content">
+                <div class="music-header">
+                  <span class="music-xe">XE</span>
+                  <div class="music-device-pill">
+                    <svg width="10" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                    <span>This stream</span>
+                  </div>
+                </div>
+
+                <div class="music-main">
+                  <div class="music-info">
+                    <div class="music-title" id="music-title">Not Playing</div>
+                    <div class="music-artist" id="music-artist">-</div>
+                  </div>
+                  <div class="music-play-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+                  </div>
+                </div>
+
+                <div class="music-controls-row">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="control-btn"><polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5"></line></svg>
+                  
+                  <div class="music-timeline-container">
+                    <div class="progress-bar-container">
+                      <div class="progress-bar-fill" id="music-progress-fill" style="width: 0%;"></div>
+                    </div>
+                  </div>
+
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="control-btn"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></svg>
+                  
+                  <div id="lottie-visualizer" class="lottie-visualizer"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Previous Match Scores Section (hidden by default) -->
+          <div class="notification-card previous-match-card" id="previous-match-card" style="display: none;">
+            <div class="notification-header">
+              <div class="notif-header-left">
+                <span class="notif-app-name">RISER'S 2.0</span>
+                <span class="notif-bullet">•</span>
+                <span class="notif-title">Previously</span>
+              </div>
+              <span class="notif-time">Scores</span>
+            </div>
+
+            <div class="vs-section">
+              <div class="team-container">
+                <div class="team-logo-container" id="team-c-logo-container">
+                  <div class="team-initials" id="team-c-initials" style="display:none;"></div>
+                  <img src="" alt="" class="team-logo" id="team-c-logo" style="display:none;">
+                </div>
+                <span class="team-name" id="team-c-name"></span>
+              </div>
+
+              <span class="score-text" id="prev-score">0 – 0</span>
+
+              <div class="team-container">
+                <div class="team-logo-container" id="team-d-logo-container">
+                  <div class="team-initials" id="team-d-initials" style="display:none;"></div>
+                  <img src="" alt="" class="team-logo" id="team-d-logo" style="display:none;">
+                </div>
+                <span class="team-name" id="team-d-name"></span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Phone Frame Overlay (In front of Screen) -->
+      <img src="assets/phone-frame/frame.png" alt="Phone Frame" class="phone-frame">
+    </div>
+  </div>
+
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
