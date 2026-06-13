@@ -87,12 +87,12 @@ body {
 .phone-screen {
   position: absolute;
   /* Shifted inward to prevent wallpaper from overflowing the phone bezel frame */
-  top: 1.5%;
-  bottom: 1.5%;
-  left: 3.8%;
-  right: 3.8%;
+  top: 3.8%;
+  bottom: 3.2%;
+  left: 10.8%;
+  right: 10.8%;
   z-index: 1;
-  border-radius: 42px; /* Fits screen corner curvature */
+  border-radius: 40px; /* Fits screen corner curvature */
   background-size: 100% 100%; /* Stretches background to fill screen completely */
   background-position: center;
   background-repeat: no-repeat;
@@ -121,8 +121,8 @@ body {
   flex-direction: column;
   justify-content: flex-start; /* Pushes everything to the top */
   align-items: center;
-  padding: 70px 20px 20px 20px; /* Reset top padding to 70px to bring timer down slightly */
-  gap: 12px; /* Minimal, uniform gaps between elements */
+  padding: 65px 16px 16px 16px; /* Reset top padding to 65px for iOS dynamic island */
+  gap: 8px; /* Minimal, uniform gaps between elements */
 }
 
 /* Top Section: "Match starts in" & Clock */
@@ -145,7 +145,7 @@ body {
 
 .clock-text {
   font-family: 'Inria Serif', serif;
-  font-size: 125px;
+  font-size: 110px;
   font-weight: 400;
   color: #ffffff;
   line-height: 0.95;
@@ -156,6 +156,8 @@ body {
 
 /* iOS style Notification Card */
 .notification-card {
+  position: relative;
+  overflow: hidden;
   width: 92%;
   background: rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(8px); /* Reduced blur from 20px for transparency */
@@ -170,7 +172,28 @@ body {
   margin-top: 5px; /* Minimal gap below clock */
 }
 
+.notif-bg {
+  position: absolute;
+  top: -10px; bottom: -10px; left: -10px; right: -10px;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.5); /* Dim style */
+  z-index: 0;
+  transition: background-image 0.5s ease;
+  display: none;
+}
+
+.notif-overlay {
+  position: absolute;
+  top: 0; bottom: 0; left: 0; right: 0;
+  background: rgba(0, 0, 0, 0.35); /* Same dim type overlay */
+  z-index: 1;
+  display: none;
+}
+
 .notification-header {
+  position: relative;
+  z-index: 2;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -218,6 +241,8 @@ body {
 
 /* Middle Section: VS Matchup (Inside Notification Card) */
 .vs-section {
+  position: relative;
+  z-index: 2;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -510,4 +535,96 @@ body {
 /* Previous Match Card */
 .previous-match-card {
   margin-top: 0;
+}
+
+/* Android Frame adjustments */
+.phone-container.android-frame .phone-screen {
+  top: 1.8%;
+  bottom: 1.2%;
+  left: 4.5%;
+  right: 4.5%;
+  border-radius: 38px;
+}
+
+.phone-container.android-frame .screen-content {
+  padding-top: 55px;
+}
+
+/* iOS Frame adjustments */
+.phone-container.ios-frame .phone-screen {
+  top: 3.8%;
+  bottom: 3.2%;
+  left: 10.8%;
+  right: 10.8%;
+  border-radius: 40px;
+}
+
+.phone-container.ios-frame .screen-content {
+  padding-top: 65px;
+}
+
+/* Blur effect for card backgrounds */
+.notif-bg.blurred {
+  filter: brightness(0.5) blur(8px);
+}
+
+/* Status Bar */
+.status-bar {
+  position: absolute;
+  top: 6px;
+  left: 16px;
+  right: 16px;
+  z-index: 5;
+  display: none; /* Controlled by JS */
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.95);
+  pointer-events: none;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.status-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: auto;
+}
+
+.status-icon {
+  display: block;
+}
+
+/* iOS status bar overrides */
+.phone-container.ios-frame .status-bar {
+  top: 16px;
+  left: 20px;
+  right: 20px;
+  font-size: 10px;
+}
+
+.phone-container.ios-frame .status-bar-left {
+  margin-left: 12px;
+}
+
+.phone-container.ios-frame .status-bar-right {
+  margin-right: 12px;
+}
+
+/* Android status bar overrides */
+.phone-container.android-frame .status-bar {
+  top: 10px;
+  left: 12px;
+  right: 12px;
+  font-size: 11px;
+}
+
+.phone-container.android-frame .status-bar-left {
+  margin-left: 22px;
+}
+
+.phone-container.android-frame .status-bar-right {
+  margin-right: 22px;
 }

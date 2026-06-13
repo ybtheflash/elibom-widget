@@ -77,12 +77,37 @@
               <input type="number" id="timer-ss" class="timer-input" min="0" max="59" value="00" placeholder="SS">
             </div>
           </div>
+
+          <div class="toggle-row" style="margin-top: 4px; margin-bottom: 8px;">
+            <span class="toggle-label" style="font-size: 13px; color: rgba(255,255,255,0.55);">Timer Direction</span>
+            <div class="toggle-group">
+              <button class="toggle-btn active" id="direction-down" data-direction="down">Count Down</button>
+              <button class="toggle-btn" id="direction-up" data-direction="up">Count Up</button>
+            </div>
+          </div>
+
           <div class="timer-actions">
             <button id="timer-set" class="btn btn-secondary">Set</button>
             <button id="timer-start" class="btn btn-primary">▶ Start</button>
             <button id="timer-stop" class="btn btn-danger">⏹ Stop</button>
+            <button id="timer-reset" class="btn btn-danger" style="background: #e11d48;">↺ Reset</button>
           </div>
           <div class="timer-preview" id="timer-preview">Current: 00:00</div>
+        </div>
+
+        <!-- Custom Label Override Section -->
+        <div class="custom-label-section" style="margin-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 16px;">
+          <div class="toggle-row" style="margin-bottom: 12px;">
+            <span class="toggle-label" style="font-weight: 500;">Custom Label Override</span>
+            <label class="switch">
+              <input type="checkbox" id="custom-label-enabled">
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="input-row" id="custom-label-input-row" style="display: none;">
+            <label class="field-label">Custom Label Text</label>
+            <input type="text" id="custom-label-text" class="text-input" placeholder="e.g. MATCH STARTS IN or LIVE" style="width: 100%;">
+          </div>
         </div>
       </section>
 
@@ -96,6 +121,34 @@
             <input type="checkbox" id="show-upnext-match" checked>
             <span class="slider"></span>
           </label>
+        </div>
+
+        <div class="toggle-row">
+          <span class="toggle-label">Use Custom Background</span>
+          <label class="switch">
+            <input type="checkbox" id="upnext-bg-enabled">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="toggle-row">
+          <span class="toggle-label">Blur Background</span>
+          <label class="switch">
+            <input type="checkbox" id="upnext-bg-blur">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="toggle-row" id="upnext-bg-upload-row">
+          <span class="toggle-label" style="font-size: 13px; color: rgba(255, 255, 255, 0.55);">Upload Card BG</span>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <label class="upload-btn" for="upnext-bg-upload-input" id="upnext-bg-load-label">Load BG</label>
+            <input type="file" id="upnext-bg-upload-input" accept="image/*" hidden>
+            <span id="upnext-bg-status" style="font-size: 11px; color: rgba(255, 255, 255, 0.4);">No file loaded</span>
+            <button class="unload-logo-btn" id="upnext-bg-unload" style="display:none;" title="Remove Background">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+            </button>
+          </div>
         </div>
 
         <div class="team-edit-row">
@@ -147,6 +200,34 @@
           </label>
         </div>
 
+        <div class="toggle-row">
+          <span class="toggle-label">Use Custom Background</span>
+          <label class="switch">
+            <input type="checkbox" id="prev-bg-enabled">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="toggle-row">
+          <span class="toggle-label">Blur Background</span>
+          <label class="switch">
+            <input type="checkbox" id="prev-bg-blur">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="toggle-row" id="prev-bg-upload-row">
+          <span class="toggle-label" style="font-size: 13px; color: rgba(255, 255, 255, 0.55);">Upload Card BG</span>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <label class="upload-btn" for="prev-bg-upload-input" id="prev-bg-load-label">Load BG</label>
+            <input type="file" id="prev-bg-upload-input" accept="image/*" hidden>
+            <span id="prev-bg-status" style="font-size: 11px; color: rgba(255, 255, 255, 0.4);">No file loaded</span>
+            <button class="unload-logo-btn" id="prev-bg-unload" style="display:none;" title="Remove Background">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+            </button>
+          </div>
+        </div>
+
         <div class="team-edit-row">
           <div class="team-edit-col">
             <label class="field-label">Team C</label>
@@ -189,6 +270,43 @@
             <input type="text" id="score-a" class="score-input" placeholder="0" value="0">
             <span class="score-dash">–</span>
             <input type="text" id="score-b" class="score-input" placeholder="0" value="0">
+          </div>
+        </div>
+      </section>
+
+      <!-- Status Bar Section -->
+      <section class="panel-card">
+        <h2 class="card-title" style="margin-bottom: 16px;">📶 Status Bar</h2>
+
+        <div class="toggle-row" style="margin-bottom: 12px;">
+          <span class="toggle-label">Show Carrier/Network Text</span>
+          <label class="switch">
+            <input type="checkbox" id="status-network-enabled">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="toggle-row" id="status-network-input-row" style="display: none; margin-bottom: 16px; align-items: center;">
+          <span class="toggle-label" style="font-size: 13px; color: rgba(255, 255, 255, 0.55);">Carrier Text (Max 10 letters)</span>
+          <input type="text" id="status-network-text" class="text-input" placeholder="e.g. Jio" maxlength="10" style="width: 150px; text-align: right;">
+        </div>
+
+        <div class="toggle-row" style="margin-bottom: 0;">
+          <span class="toggle-label">Show Battery & Signal Icons</span>
+          <label class="switch">
+            <input type="checkbox" id="status-icons-enabled">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </section>
+
+      <!-- Device Frame Section -->
+      <section class="panel-card">
+        <div class="toggle-row" style="margin-bottom: 0;">
+          <span class="toggle-label">Device Frame <span style="font-size: 10px; background: rgba(139, 92, 246, 0.2); color: #a78bfa; padding: 2px 6px; border-radius: 4px; margin-left: 6px;">BETA</span></span>
+          <div class="toggle-group">
+            <button class="toggle-btn active" id="frame-ios" data-frame="ios">iOS</button>
+            <button class="toggle-btn" id="frame-android" data-frame="android">Android</button>
           </div>
         </div>
       </section>

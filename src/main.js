@@ -1,4 +1,8 @@
 import { init, tx } from '@instantdb/core';
+import phoneBg from '../assets/phone-bg.webp';
+import emptyPlayerBg from '../assets/empty-player.webp';
+import frameDefault from '../assets/phone-frame/frame.png';
+import frameAndroid from '../assets/phone-frame/frame-2.png';
 
 const APP_ID = '3a46f5e4-5e7b-4e3c-a689-64a0a7ae4786';
 const CONFIG_ID = '11111111-1111-1111-1111-111111111111';
@@ -27,9 +31,20 @@ function updateClockOrTimer() {
 
   const cfg = widgetConfig;
 
+  // Set the header label
+  if (cfg && cfg.customLabelEnabled && cfg.customLabelText) {
+    labelEl.textContent = cfg.customLabelText;
+  } else {
+    if (cfg && cfg.clockMode === 'clock') {
+      labelEl.textContent = 'Current Time IST';
+    } else {
+      labelEl.textContent = 'Match starts in';
+    }
+  }
+
+  // Calculate and format values
   if (cfg && cfg.clockMode === 'clock') {
     // Show current IST time
-    labelEl.textContent = 'Current Time IST';
     const now = new Date();
     // IST = UTC + 5:30
     const istOffset = 5.5 * 60 * 60 * 1000;
@@ -38,13 +53,15 @@ function updateClockOrTimer() {
     const m = String(istTime.getMinutes()).padStart(2, '0');
     clockEl.textContent = `${h}:${m}`;
   } else if (cfg && cfg.clockMode === 'countdown') {
-    labelEl.textContent = 'Match starts in';
+    const isUp = cfg.timerDirection === 'up';
 
     if (cfg.timerRunning && cfg.timerStartedAt) {
       const elapsed = (Date.now() - cfg.timerStartedAt) / 1000;
-      let remaining = Math.max(0, (cfg.timerPausedRemaining || 0) - elapsed);
-      const mm = String(Math.floor(remaining / 60)).padStart(2, '0');
-      const ss = String(Math.floor(remaining % 60)).padStart(2, '0');
+      let val = isUp
+        ? (cfg.timerPausedRemaining || 0) + elapsed
+        : Math.max(0, (cfg.timerPausedRemaining || 0) - elapsed);
+      const mm = String(Math.floor(val / 60)).padStart(2, '0');
+      const ss = String(Math.floor(val % 60)).padStart(2, '0');
       clockEl.textContent = `${mm}:${ss}`;
     } else {
       const remaining = cfg.timerPausedRemaining || 0;
@@ -54,7 +71,6 @@ function updateClockOrTimer() {
     }
   } else {
     // Default: show current local time
-    labelEl.textContent = 'Match starts in';
     const now = new Date();
     const h = String(now.getHours()).padStart(2, '0');
     const m = String(now.getMinutes()).padStart(2, '0');
@@ -179,7 +195,96 @@ function applyConfig(cfg) {
     if (cfg.bgImageUrl) {
       phoneScreen.style.backgroundImage = `url('${cfg.bgImageUrl}')`;
     } else {
-      phoneScreen.style.backgroundImage = "url('assets/phone-bg.webp')";
+      phoneScreen.style.backgroundImage = `url('${phoneBg}')`;
+    }
+  }
+
+  // Phone Frame selection (iOS / Android)
+  const phoneFrame = document.querySelector('.phone-frame');
+  const phoneContainer = document.querySelector('.phone-container');
+  if (phoneFrame && phoneContainer) {
+    if (cfg.useAndroidFrame) {
+      phoneFrame.src = frameDefault; // frame.png is Android
+      phoneContainer.classList.add('android-frame');
+      phoneContainer.classList.remove('ios-frame');
+    } else {
+      phoneFrame.src = frameAndroid; // frame-2.png is iOS
+      phoneContainer.classList.add('ios-frame');
+      phoneContainer.classList.remove('android-frame');
+    }
+  }
+
+  // Up Next card background
+  const upNextBg = document.getElementById('upnext-bg');
+  const upNextOverlay = document.getElementById('upnext-overlay');
+  if (upNextBg && upNextOverlay) {
+    if (cfg.upNextBgEnabled && cfg.upNextBgUrl) {
+      upNextBg.style.backgroundImage = `url('${cfg.upNextBgUrl}')`;
+      upNextBg.style.display = 'block';
+      upNextBg.classList.toggle('blurred', !!cfg.upNextBgBlur);
+      upNextOverlay.style.display = 'block';
+    } else {
+      upNextBg.style.backgroundImage = '';
+      upNextBg.style.display = 'none';
+      upNextBg.classList.remove('blurred');
+      upNextOverlay.style.display = 'none';
+    }
+  }
+
+  // Previously card background
+  const prevBg = document.getElementById('prev-bg');
+  const prevOverlay = document.getElementById('prev-overlay');
+  if (prevBg && prevOverlay) {
+    if (cfg.prevBgEnabled && cfg.prevBgUrl) {
+      prevBg.style.backgroundImage = `url('${cfg.prevBgUrl}')`;
+      prevBg.style.display = 'block';
+      prevBg.classList.toggle('blurred', !!cfg.prevBgBlur);
+      prevOverlay.style.display = 'block';
+    } else {
+      prevBg.style.backgroundImage = '';
+      prevBg.style.display = 'none';
+      prevBg.classList.remove('blurred');
+      prevOverlay.style.display = 'none';
+    }
+  }
+
+  // Status Bar updates
+  const statusBar = document.getElementById('status-bar');
+  const statusCarrier = document.getElementById('status-carrier');
+  const statusIcons = document.getElementById('status-icons');
+
+  if (statusBar && statusCarrier && statusIcons) {
+    const showNetwork = !!cfg.statusNetworkEnabled;
+    const showIcons = !!cfg.statusIconsEnabled;
+
+    if (showNetwork || showIcons) {
+      statusBar.style.display = 'flex';
+      
+      if (showNetwork) {
+        statusCarrier.style.display = 'block';
+        const rawText = cfg.statusNetworkText || 'Jio';
+        const text = rawText.substring(0, 10);
+        statusCarrier.textContent = text;
+        if (cfg.useAndroidFrame) {
+          if (text.length > 8) {
+            statusCarrier.style.marginLeft = '8px';
+          } else {
+            statusCarrier.style.marginLeft = '22px';
+          }
+        } else {
+          statusCarrier.style.marginLeft = '';
+        }
+      } else {
+        statusCarrier.style.display = 'none';
+      }
+
+      if (showIcons) {
+        statusIcons.style.display = 'flex';
+      } else {
+        statusIcons.style.display = 'none';
+      }
+    } else {
+      statusBar.style.display = 'none';
     }
   }
 
@@ -341,7 +446,7 @@ async function fetchNowPlaying() {
       if (titleEl) titleEl.textContent = "Not Playing";
       if (artistEl) artistEl.textContent = "-";
       if (bgEl) {
-        bgEl.style.backgroundImage = "url('assets/empty-player.webp')";
+        bgEl.style.backgroundImage = `url('${emptyPlayerBg}')`;
         bgEl.style.filter = "brightness(0.3)";
       }
 

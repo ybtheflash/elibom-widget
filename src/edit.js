@@ -105,6 +105,17 @@ function populateForm(cfg) {
   safelySetValue('timer-ss', String(ss).padStart(2, '0'));
   updateTimerPreview(cfg);
 
+  // Timer direction
+  const isUp = cfg.timerDirection === 'up';
+  document.getElementById('direction-down').classList.toggle('active', !isUp);
+  document.getElementById('direction-up').classList.toggle('active', isUp);
+
+  // Custom Label override
+  const labelEnabled = !!cfg.customLabelEnabled;
+  document.getElementById('custom-label-enabled').checked = labelEnabled;
+  document.getElementById('custom-label-input-row').style.display = labelEnabled ? 'block' : 'none';
+  safelySetValue('custom-label-text', cfg.customLabelText);
+
   // Team A/B names
   safelySetValue('team-a-name', cfg.teamAName);
   safelySetValue('team-b-name', cfg.teamBName);
@@ -154,6 +165,46 @@ function populateForm(cfg) {
     bgLoadLabel.classList.remove('disabled');
     bgUnloadBtn.style.display = 'none';
   }
+
+  // Up Next Background
+  document.getElementById('upnext-bg-enabled').checked = !!cfg.upNextBgEnabled;
+  document.getElementById('upnext-bg-blur').checked = !!cfg.upNextBgBlur;
+  const upnextStatus = document.getElementById('upnext-bg-status');
+  const upnextUnload = document.getElementById('upnext-bg-unload');
+  if (cfg.upNextBgUrl) {
+    upnextStatus.textContent = 'Custom BG loaded';
+    upnextUnload.style.display = 'inline-flex';
+  } else {
+    upnextStatus.textContent = 'No file loaded';
+    upnextUnload.style.display = 'none';
+  }
+
+  // Previous Background
+  document.getElementById('prev-bg-enabled').checked = !!cfg.prevBgEnabled;
+  document.getElementById('prev-bg-blur').checked = !!cfg.prevBgBlur;
+  const prevStatus = document.getElementById('prev-bg-status');
+  const prevUnload = document.getElementById('prev-bg-unload');
+  if (cfg.prevBgUrl) {
+    prevStatus.textContent = 'Custom BG loaded';
+    prevUnload.style.display = 'inline-flex';
+  } else {
+    prevStatus.textContent = 'No file loaded';
+    prevUnload.style.display = 'none';
+  }
+
+  // Device Frame (iOS / Android)
+  const isAndroid = !!cfg.useAndroidFrame;
+  document.getElementById('frame-ios').classList.toggle('active', !isAndroid);
+  document.getElementById('frame-android').classList.toggle('active', isAndroid);
+
+  // Status Bar Network Carrier
+  const netEnabled = !!cfg.statusNetworkEnabled;
+  document.getElementById('status-network-enabled').checked = netEnabled;
+  document.getElementById('status-network-input-row').style.display = netEnabled ? 'flex' : 'none';
+  safelySetValue('status-network-text', cfg.statusNetworkText);
+
+  // Status Bar Icons
+  document.getElementById('status-icons-enabled').checked = !!cfg.statusIconsEnabled;
 }
 
 function setLogoPreview(elId, src, rounded) {
@@ -175,14 +226,18 @@ function updateTimerPreview(cfg) {
   const previewEl = document.getElementById('timer-preview');
   if (!cfg) { previewEl.textContent = 'Current: 00:00'; return; }
 
+  const isUp = cfg.timerDirection === 'up';
+
   if (cfg.timerRunning && cfg.timerStartedAt) {
     // Show live countdown
     if (previewInterval) clearInterval(previewInterval);
     previewInterval = setInterval(() => {
       const elapsed = (Date.now() - cfg.timerStartedAt) / 1000;
-      let rem = Math.max(0, (cfg.timerPausedRemaining || 0) - elapsed);
-      const m = Math.floor(rem / 60);
-      const s = Math.floor(rem % 60);
+      let val = isUp
+        ? (cfg.timerPausedRemaining || 0) + elapsed
+        : Math.max(0, (cfg.timerPausedRemaining || 0) - elapsed);
+      const m = Math.floor(val / 60);
+      const s = Math.floor(val % 60);
       previewEl.textContent = `⏱ LIVE: ${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
     }, 250);
   } else {
@@ -277,7 +332,11 @@ function bindControls() {
     let remaining = currentConfig.timerPausedRemaining || 0;
     if (currentConfig.timerRunning && currentConfig.timerStartedAt) {
       const elapsed = (Date.now() - currentConfig.timerStartedAt) / 1000;
-      remaining = Math.max(0, remaining - elapsed);
+      if (currentConfig.timerDirection === 'up') {
+        remaining = remaining + elapsed;
+      } else {
+        remaining = Math.max(0, remaining - elapsed);
+      }
     }
     updateConfig({
       timerRunning: false,
@@ -285,6 +344,32 @@ function bindControls() {
       timerPausedRemaining: Math.floor(remaining)
     });
   });
+
+  // Timer reset
+  document.getElementById('timer-reset').addEventListener('click', () => {
+    updateConfig({
+      timerRunning: false,
+      timerStartedAt: null,
+      timerPausedRemaining: 0
+    });
+  });
+
+  // Timer direction toggles
+  document.getElementById('direction-down').addEventListener('click', () => {
+    updateConfig({ timerDirection: 'down' });
+  });
+  document.getElementById('direction-up').addEventListener('click', () => {
+    updateConfig({ timerDirection: 'up' });
+  });
+
+  // Custom label toggle
+  document.getElementById('custom-label-enabled').addEventListener('change', (e) => {
+    updateConfig({ customLabelEnabled: e.target.checked });
+    document.getElementById('custom-label-input-row').style.display = e.target.checked ? 'block' : 'none';
+  });
+
+  // Custom label text (debounced)
+  bindDebouncedInput('custom-label-text', 'customLabelText');
 
   // Team name inputs (debounced)
   bindDebouncedInput('team-a-name', 'teamAName');
@@ -382,6 +467,142 @@ function bindControls() {
       console.error('BG delete error', err);
       bgStatus.textContent = 'Failed to remove';
     }
+  });
+
+  // Up Next Background Enable Toggle
+  document.getElementById('upnext-bg-enabled').addEventListener('change', (e) => {
+    updateConfig({ upNextBgEnabled: e.target.checked });
+  });
+
+  // Previously Background Enable Toggle
+  document.getElementById('prev-bg-enabled').addEventListener('change', (e) => {
+    updateConfig({ prevBgEnabled: e.target.checked });
+  });
+
+  // Up Next BG Upload
+  document.getElementById('upnext-bg-upload-input').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const statusEl = document.getElementById('upnext-bg-status');
+    statusEl.textContent = 'Uploading...';
+    try {
+      const base64 = await convertBgToWebP(file);
+      const res = await fetch('/api/bg/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data: base64, contentType: 'image/webp' })
+      });
+      const result = await res.json();
+      if (result.ok) {
+        updateConfig({ upNextBgUrl: result.url, upNextBgKey: result.key });
+        statusEl.textContent = 'Uploaded!';
+      } else {
+        statusEl.textContent = 'Failed: ' + (result.error || 'Unknown');
+      }
+    } catch (err) {
+      console.error(err);
+      statusEl.textContent = 'Upload failed';
+    }
+    e.target.value = '';
+  });
+
+  // Previously BG Upload
+  document.getElementById('prev-bg-upload-input').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const statusEl = document.getElementById('prev-bg-status');
+    statusEl.textContent = 'Uploading...';
+    try {
+      const base64 = await convertBgToWebP(file);
+      const res = await fetch('/api/bg/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data: base64, contentType: 'image/webp' })
+      });
+      const result = await res.json();
+      if (result.ok) {
+        updateConfig({ prevBgUrl: result.url, prevBgKey: result.key });
+        statusEl.textContent = 'Uploaded!';
+      } else {
+        statusEl.textContent = 'Failed: ' + (result.error || 'Unknown');
+      }
+    } catch (err) {
+      console.error(err);
+      statusEl.textContent = 'Upload failed';
+    }
+    e.target.value = '';
+  });
+
+  // Up Next BG Unload
+  document.getElementById('upnext-bg-unload').addEventListener('click', async () => {
+    const statusEl = document.getElementById('upnext-bg-status');
+    const key = currentConfig?.upNextBgKey;
+    statusEl.textContent = 'Removing...';
+    try {
+      if (key) {
+        await fetch('/api/bg/delete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ key })
+        });
+      }
+      updateConfig({ upNextBgUrl: '', upNextBgKey: '' });
+      statusEl.textContent = 'No file loaded';
+    } catch (err) {
+      console.error(err);
+      statusEl.textContent = 'Failed to remove';
+    }
+  });
+
+  // Previously BG Unload
+  document.getElementById('prev-bg-unload').addEventListener('click', async () => {
+    const statusEl = document.getElementById('prev-bg-status');
+    const key = currentConfig?.prevBgKey;
+    statusEl.textContent = 'Removing...';
+    try {
+      if (key) {
+        await fetch('/api/bg/delete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ key })
+        });
+      }
+      updateConfig({ prevBgUrl: '', prevBgKey: '' });
+      statusEl.textContent = 'No file loaded';
+    } catch (err) {
+      console.error(err);
+      statusEl.textContent = 'Failed to remove';
+    }
+  });
+
+  // Device Frame selection (iOS / Android)
+  document.getElementById('frame-ios').addEventListener('click', () => {
+    updateConfig({ useAndroidFrame: false });
+  });
+  document.getElementById('frame-android').addEventListener('click', () => {
+    updateConfig({ useAndroidFrame: true });
+  });
+
+  // Blur Background Toggles
+  document.getElementById('upnext-bg-blur').addEventListener('change', (e) => {
+    updateConfig({ upNextBgBlur: e.target.checked });
+  });
+  document.getElementById('prev-bg-blur').addEventListener('change', (e) => {
+    updateConfig({ prevBgBlur: e.target.checked });
+  });
+
+  // Status Bar Network Carrier Toggle
+  document.getElementById('status-network-enabled').addEventListener('change', (e) => {
+    updateConfig({ statusNetworkEnabled: e.target.checked });
+    document.getElementById('status-network-input-row').style.display = e.target.checked ? 'flex' : 'none';
+  });
+
+  // Status Bar Network Carrier Text (debounced)
+  bindDebouncedInput('status-network-text', 'statusNetworkText');
+
+  // Status Bar Icons Toggle
+  document.getElementById('status-icons-enabled').addEventListener('change', (e) => {
+    updateConfig({ statusIconsEnabled: e.target.checked });
   });
 }
 

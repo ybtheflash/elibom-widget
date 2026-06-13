@@ -16,6 +16,32 @@
         <!-- Overlay for darker wallpaper/contrast if needed -->
         <div class="screen-overlay"></div>
         
+        <!-- Status Bar (Carrier, Signal, Wifi, Battery) -->
+        <div class="status-bar" id="status-bar" style="display: none;">
+          <div class="status-bar-left" id="status-carrier" style="display: none;">Jio</div>
+          <div class="status-bar-right" id="status-icons" style="display: none;">
+            <!-- Signal Bars (5 bars) -->
+            <svg class="status-icon" viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+              <rect x="2" y="17" width="2.8" height="5" rx="0.5" />
+              <rect x="6.2" y="13" width="2.8" height="9" rx="0.5" />
+              <rect x="10.4" y="9" width="2.8" height="13" rx="0.5" />
+              <rect x="14.6" y="5" width="2.8" height="17" rx="0.5" />
+              <rect x="18.8" y="1" width="2.8" height="21" rx="0.5" />
+            </svg>
+            <!-- Wifi -->
+            <svg class="status-icon" viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+              <path d="M12 3C7.3 3 3.07 4.9 0 8l12 14L24 8c-3.07-3.1-7.3-5-12-5z" opacity="0.3"/>
+              <path d="M12 6c-3.6 0-6.9 1.4-9.4 3.7L12 20.8l9.4-11.1C18.9 7.4 15.6 6 12 6z"/>
+            </svg>
+            <!-- Battery (iOS outline style with inner charge block) -->
+            <svg class="status-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <rect x="2" y="7" width="16" height="10" rx="2" ry="2" />
+              <line x1="22" y1="11" x2="22" y2="13" />
+              <rect x="5" y="10" width="8" height="4" fill="currentColor" stroke="none" />
+            </svg>
+          </div>
+        </div>
+        
         <div class="screen-content">
           <!-- Top Section: Header & Clock -->
           <div class="header-section">
@@ -25,6 +51,8 @@
 
           <!-- Notification Box (Up Next Matchup) -->
           <div class="notification-card" id="upnext-card">
+            <div class="notif-bg" id="upnext-bg"></div>
+            <div class="notif-overlay" id="upnext-overlay"></div>
             <div class="notification-header">
               <div class="notif-header-left">
                 <span class="notif-app-name">RISER'S 2.0</span>
@@ -99,6 +127,8 @@
 
           <!-- Previous Match Scores Section (hidden by default) -->
           <div class="notification-card previous-match-card" id="previous-match-card" style="display: none;">
+            <div class="notif-bg" id="prev-bg"></div>
+            <div class="notif-overlay" id="prev-overlay"></div>
             <div class="notification-header">
               <div class="notif-header-left">
                 <span class="notif-app-name">RISER'S 2.0</span>
@@ -133,7 +163,7 @@
       </div>
 
       <!-- Phone Frame Overlay (In front of Screen) -->
-      <img src="assets/phone-frame/frame.png" alt="Phone Frame" class="phone-frame">
+      <img src="assets/phone-frame/frame-2.png" alt="Phone Frame" class="phone-frame">
     </div>
   </div>
 
